@@ -1,0 +1,57 @@
+host:
+  consul: localhost
+  auth-user: localhost
+
+feign:
+  client:
+    config:
+      default: { connectTimeout: 60000, readTimeout: 60000 }
+security:
+  user:
+    name: root
+    password: password1
+  oauth2:
+    resource:
+      user-info-uri: http://${host.auth-user}:8583/auth-user/api/v1/user/me
+      token-info-uri: http://${host.auth-user}:8583/auth-user/oauth/check_token
+  internal-token-uri: http://${host.auth-user}:8583/auth-user/oauth/token
+logging:
+  level:
+    org:
+      hibernate:  INFO
+      springframework:
+        web:  INFO
+        security: INFO
+
+  instance:
+    appname: ${spring.application.name}
+    preferIpAddress: true
+    leaseRenewalIntervalInSeconds: 10
+    health-check-url-path: /actuator/health
+    metadata-map:
+      startup: ${random.int}
+    client:
+      registryFetchIntervalSeconds: 5
+      serviceUrl:
+        defaultZone: ${host.eureka}/eureka/
+endpoints:
+  health:
+    sensitive: false
+management:
+  health:
+    db:
+      enabled: true
+    mail:
+      enabled: false
+  security:
+    enabled: false
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+  endpoint:
+    health:
+      enabled: true
+      show-details: ALWAYS
+    logfile:
+      external-file: /opt/emb/log/${spring.application.name}/logFile-info.log
